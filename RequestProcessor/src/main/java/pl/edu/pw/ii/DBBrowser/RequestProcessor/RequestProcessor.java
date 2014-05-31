@@ -34,8 +34,12 @@ public class RequestProcessor {
     private HttpResponse processRequest() {
         HttpRequest request = parser.getRequest();
         if(viewManager.isView(request))
-            return viewManager.getView(request);
+            return wrapViewResponse(viewManager.getView(request));
         return fileSystem.getFile(request.getPath());
+    }
+
+    private HttpResponse wrapViewResponse(String view) {
+        return null;
     }
 
 }
