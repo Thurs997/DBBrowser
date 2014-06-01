@@ -48,7 +48,7 @@ public class ViewManager {
         if (isDuplicate(annotatedClass, name))
             return;
         views.put(name, (Class<View>) annotatedClass);
-        logger.info("View added: Name="+name+", Class="+annotatedClass.getCanonicalName());
+        logger.info("View added: Path="+name+", Class="+annotatedClass.getCanonicalName());
     }
 
     private boolean implementsView(Class<?> annotatedClass) {
