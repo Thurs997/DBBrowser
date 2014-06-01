@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 
 /**
- * Created by kokoss on 5/31/14.
+ * Created by Bartosz Andrzejczak on 5/31/14.
  */
 public class ViewManager {
 

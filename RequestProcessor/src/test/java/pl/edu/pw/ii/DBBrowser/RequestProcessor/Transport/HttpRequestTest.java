@@ -7,7 +7,7 @@ import java.util.Collections;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by kokoss on 5/31/14.
+ * Created by Bartosz Andrzejczak on 5/31/14.
  */
 public class HttpRequestTest {
     private static final String TEST_PATH = "/";

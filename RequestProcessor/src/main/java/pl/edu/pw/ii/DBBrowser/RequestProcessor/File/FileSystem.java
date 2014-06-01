@@ -10,7 +10,7 @@ import java.io.StringWriter;
 import java.util.Scanner;
 
 /**
- * Created by kokoss on 5/31/14.
+ * Created by Bartosz Andrzejczak on 5/31/14.
  */
 public class FileSystem {
 

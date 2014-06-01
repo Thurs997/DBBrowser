@@ -5,7 +5,7 @@ import pl.edu.pw.ii.DBBrowser.RequestProcessor.View.View;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.View.ViewHandler;
 
 /**
- * Created by kokoss on 5/31/14.
+ * Created by Bartosz Andrzejczak on 5/31/14.
  */
 @ViewHandler(path ="/")
 public class MainView implements View {

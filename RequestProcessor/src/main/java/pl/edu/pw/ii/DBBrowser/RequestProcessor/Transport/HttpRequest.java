@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by kokoss on 5/31/14.
+ * Created by Bartosz Andrzejczak on 5/31/14.
  */
 public class HttpRequest {
     private String path;

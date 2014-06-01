@@ -5,7 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Created by kokoss on 5/31/14.
+ * Created by Bartosz Andrzejczak on 5/31/14.
  */
 public class ViewManagerTest {
 

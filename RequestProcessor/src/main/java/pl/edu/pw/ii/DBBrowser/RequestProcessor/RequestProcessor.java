@@ -8,7 +8,7 @@ import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpResponse;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.View.ViewManager;
 
 /**
- * Created by kokoss on 5/31/14.
+ * Created by Bartosz Andrzejczak on 5/31/14.
  */
 public class RequestProcessor {
     public static final String CONTENT_TYPE = "Content-Type";
