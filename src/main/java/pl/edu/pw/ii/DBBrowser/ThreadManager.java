@@ -78,11 +78,11 @@ public class ThreadManager {
     }
 
     public static void main(String[] args) {
+        //RequestProcessor Test
         RequestProcessor rp = new RequestProcessor();
-        rp.processRequest("bla");
-        System.out.print("bla");
         if(1==1)
             return;
+
         final int DEFAULT_PORT = 80;
         Runtime.getRuntime().addShutdownHook(new Thread()
         {

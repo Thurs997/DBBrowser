@@ -14,6 +14,7 @@ import java.util.logging.Logger;
  */
 public class ViewManager {
 
+    public static ViewManager instance = null;
     public static final String VIEWS_PACKAGE = "pl.edu.pw.ii.DBBrowser.View";
     Map<String, Class<View>> views;
     Logger logger;
@@ -22,7 +23,14 @@ public class ViewManager {
         return views;
     }
 
-    public ViewManager(){
+
+    public static synchronized ViewManager getInstance() {
+        if(instance == null)
+            instance = new ViewManager();
+        return instance;
+    }
+
+    private ViewManager(){
         logger = Logger.getLogger(ViewManager.class.getName());
         scanForViews();
     }
@@ -102,4 +110,6 @@ public class ViewManager {
         }
         return "";
     }
+
+
 }
