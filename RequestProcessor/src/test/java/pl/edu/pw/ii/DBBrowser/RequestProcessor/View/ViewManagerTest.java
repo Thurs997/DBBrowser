@@ -11,8 +11,7 @@ public class ViewManagerTest {
 
     @Test
     public void testViewScanning(){
-        ViewManager viewManager = new ViewManager();
-        assertNotNull(viewManager.getViews().get("/"));
+        assertNotNull(ViewManager.getInstance().getViews().get("/"));
     }
 
 }

@@ -17,7 +17,7 @@ public class RequestProcessor {
 
     public RequestProcessor(){
         parser = new RequestParser();
-        viewManager = new ViewManager();
+        viewManager = ViewManager.getInstance();
         fileSystem = new FileSystem();
     }
 
