@@ -1,5 +1,6 @@
 package pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -8,8 +9,8 @@ import java.util.Map;
 public class HttpRequest {
     private String path;
     private String requestBody;
-    private Map<String, String> headerMap;
-    private Map<String, String> parameterMap;
+    private Map<String, String> headerMap = new HashMap<String, String>();
+    private Map<String, String> parameterMap = new HashMap<String, String>();
 
     public String getPath() {
         return path;
@@ -39,6 +40,10 @@ public class HttpRequest {
         this.parameterMap = parameterMap;
     }
 
+    public void addParameter(String key, String value){
+        parameterMap.put(key, value);
+    }
+
     public Map<String, String> getHeaderMap() {
         return headerMap;
     }
@@ -51,4 +56,7 @@ public class HttpRequest {
         this.headerMap = headerMap;
     }
 
+    public void addHeader(String key, String value){
+        headerMap.put(key, value);
+    }
 }

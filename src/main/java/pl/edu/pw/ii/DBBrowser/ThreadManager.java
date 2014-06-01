@@ -1,7 +1,9 @@
 package pl.edu.pw.ii.DBBrowser;
 
 
+import pl.edu.pw.ii.DBBrowser.RequestProcessor.File.FileSystem;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.RequestProcessor;
+import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpRequest;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -78,11 +80,6 @@ public class ThreadManager {
     }
 
     public static void main(String[] args) {
-        //RequestProcessor Test
-        RequestProcessor rp = new RequestProcessor();
-        if(1==1)
-            return;
-
         final int DEFAULT_PORT = 80;
         Runtime.getRuntime().addShutdownHook(new Thread()
         {
