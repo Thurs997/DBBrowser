@@ -111,20 +111,4 @@ public class ThreadManager {
         ThreadManager.getInstance().acceptClients();
     }
 
-    /**
-     * Klient na potrzeby budowania
-     */
-    public static class Client {
-        public Client(Socket socket) {
-
-        }
-
-        public void close() {
-
-        }
-
-        public void start() {
-
-        }
-    }
 }
