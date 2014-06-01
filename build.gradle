@@ -32,14 +32,16 @@ task copyLibs(type: Copy){
 }
 
 jar{
-    dependsOn copyLibs
-    def classpath = configurations.compile.collect { "lib/"+it.getName() }.join(',')
-
     destinationDir= file('jar')
     manifest {
         attributes( "Manifest-Version"       : "1.0",
-                "Main-Class"             : "pl.edu.pw.ii.DBBrowser.ThreadManager",
-                "Class-Path"             : classpath
+                "Main-Class"             : "pl.edu.pw.ii.DBBrowser.ThreadManager"
         )
     }
+}
+
+task fatJar(type: Jar) {
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
 }
