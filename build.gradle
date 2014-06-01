@@ -26,22 +26,12 @@ allprojects{
     }
 }
 
-task copyLibs(type: Copy){
-    from configurations.compile
-    into "jar/lib"
-}
-
 jar{
-    destinationDir= file('jar')
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    destinationDir= file('target')
     manifest {
         attributes( "Manifest-Version"       : "1.0",
                 "Main-Class"             : "pl.edu.pw.ii.DBBrowser.ThreadManager"
         )
     }
-}
-
-task fatJar(type: Jar) {
-    baseName = project.name + '-all'
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
 }
