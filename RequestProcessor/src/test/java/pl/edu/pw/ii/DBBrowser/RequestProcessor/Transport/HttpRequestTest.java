@@ -11,11 +11,11 @@ import static org.junit.Assert.assertEquals;
  */
 public class HttpRequestTest {
     private static final String TEST_PATH = "/";
-    private static final HttpRequest.HttpMethod TEST_METHOD = HttpRequest.HttpMethod.POST;
     private static final String TEST_HEADER_KEY = "Content-Length";
     private static final String TEST_HEADER_VALUE = "0";
     private static final String TEST_PARAMETER_KEY = "test";
     private static final String TEST_PARAMETER_VALUE = "1";
+    private static final String TEST_BODY_VALUE = "test";
 
     @Test
     public void HttpRequestApi(){
@@ -26,7 +26,7 @@ public class HttpRequestTest {
     private HttpRequest createTestHttpRequest() {
         HttpRequest testRequest = new HttpRequest();
         testRequest.setPath(TEST_PATH);
-        testRequest.setMethod(TEST_METHOD);
+        testRequest.setRequestBody(TEST_BODY_VALUE);
         testRequest.setHeaderMap(Collections.singletonMap(TEST_HEADER_KEY, TEST_HEADER_VALUE));
         testRequest.setParameterMap(Collections.singletonMap(TEST_PARAMETER_KEY, TEST_PARAMETER_VALUE));
         return testRequest;
@@ -34,12 +34,11 @@ public class HttpRequestTest {
 
     private void readTestHttpRequest(HttpRequest testRequest) {
         assertEquals(TEST_PATH, testRequest.getPath());
-        assertEquals(TEST_METHOD, testRequest.getMethod());
+        assertEquals(TEST_BODY_VALUE, testRequest.getRequestBody());
         assertEquals(TEST_HEADER_VALUE, testRequest.getHeaderMap().get(TEST_HEADER_KEY));
         assertEquals(TEST_HEADER_VALUE, testRequest.getHeader(TEST_HEADER_KEY));
         assertEquals(TEST_PARAMETER_VALUE, testRequest.getParameterMap().get(TEST_PARAMETER_KEY));
         assertEquals(TEST_PARAMETER_VALUE, testRequest.getParameter(TEST_PARAMETER_KEY));
     }
-
 
 }

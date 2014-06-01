@@ -1,4 +1,4 @@
-package pl.edu.pw.ii.DBBrowser.ThreadManager;
+package pl.edu.pw.ii.DBBrowser;
 
 
 import java.io.IOException;
@@ -67,8 +67,8 @@ public class ThreadManager {
     }
 
     private void createAndRegisterNewClient(Socket socket) {
-        clientList.push(new Client(socket));
-        clientList.getLast().start();
+        clientList.add(new Client(socket));
+        clientList.get(clientList.size()-1).start();
     }
 
     private ThreadManager() {
@@ -104,4 +104,20 @@ public class ThreadManager {
         ThreadManager.getInstance().acceptClients();
     }
 
+    /**
+     * Klient na potrzeby budowania
+     */
+    public static class Client {
+        public Client(Socket socket) {
+
+        }
+
+        public void close() {
+
+        }
+
+        public void start() {
+
+        }
+    }
 }

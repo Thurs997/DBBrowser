@@ -7,7 +7,7 @@ import java.util.Map;
  */
 public class HttpRequest {
     private String path;
-    private HttpMethod method;
+    private String requestBody;
     private Map<String, String> headerMap;
     private Map<String, String> parameterMap;
 
@@ -19,12 +19,12 @@ public class HttpRequest {
         this.path = path;
     }
 
-    public HttpMethod getMethod() {
-        return method;
+    public String getRequestBody() {
+        return requestBody;
     }
 
-    public void setMethod(HttpMethod method) {
-        this.method = method;
+    public void setRequestBody(String requestBody) {
+        this.requestBody = requestBody;
     }
 
     public Map<String, String> getParameterMap() {
@@ -51,8 +51,4 @@ public class HttpRequest {
         this.headerMap = headerMap;
     }
 
-    public enum HttpMethod{
-        POST(),
-        GET()
-    }
 }

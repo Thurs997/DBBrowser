@@ -1,1 +1,1 @@
-include 'View', 'RequestProcessor', 'ThreadManager'
+include 'RequestProcessor', 'View'

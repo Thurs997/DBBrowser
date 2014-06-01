@@ -1,7 +1,13 @@
 version = '1.0'
-apply plugin: 'idea'
+apply plugin: 'java'
 
-subprojects {
+processResources{
+    from(projectDir){
+        include 'resources'
+    }
+}
+
+allprojects{
 
     apply plugin: 'java'
 
@@ -14,6 +20,5 @@ subprojects {
 
     dependencies {
         testCompile group: 'junit', name: 'junit', version: '4.11'
-        compile group: 'log4j', name: 'log4j', version: '1.2.17'
     }
 }

@@ -1,12 +1,12 @@
 package pl.edu.pw.ii.DBBrowser.RequestProcessor.View;
 
-import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpRequest;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
+import java.util.logging.Logger;
 
 
 /**

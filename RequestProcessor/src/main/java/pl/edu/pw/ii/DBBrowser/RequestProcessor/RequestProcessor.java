@@ -2,6 +2,7 @@ package pl.edu.pw.ii.DBBrowser.RequestProcessor;
 
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.File.FileSystem;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.Parser.RequestParser;
+import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.FileResponse;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpRequest;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpResponse;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.View.ViewManager;
@@ -35,10 +36,14 @@ public class RequestProcessor {
         HttpRequest request = parser.getRequest();
         if(viewManager.isView(request))
             return wrapViewResponse(viewManager.getView(request));
-        return fileSystem.getFile(request.getPath());
+        return wrapFileResponse(fileSystem.getFile(request.getPath()));
     }
 
     private HttpResponse wrapViewResponse(String view) {
+        return null;
+    }
+
+    private HttpResponse wrapFileResponse(FileResponse file) {
         return null;
     }
 
