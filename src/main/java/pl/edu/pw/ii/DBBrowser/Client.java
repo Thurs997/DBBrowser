@@ -58,10 +58,9 @@ public class Client extends Thread {
         while((inputLine = inputStream.readLine())!= null && !finished) {
             System.out.println(inputLine);
 
-            //???
             rProcessor.processRequest(inputLine);
             response = rProcessor.getResponse();
-            if (response.equals(HttpResponse.incomplete()))
+            if (!response.isComplete())
                 continue;
 
             outputStream.print(response.toString());
