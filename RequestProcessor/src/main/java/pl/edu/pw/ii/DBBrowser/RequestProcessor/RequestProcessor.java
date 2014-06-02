@@ -29,7 +29,7 @@ public class RequestProcessor {
     }
 
     public HttpResponse getResponse(){
-        if(parser.isInTerminateState())
+        if(parser.isInTerminalState())
             return processRequest();
         else
             return HttpResponse.incomplete();
