@@ -87,13 +87,16 @@ public class HttpResponse {
         NOT_FOUND(404),
         OK(200);
 
-    public String toBytes() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("HTTP/1.1 200 OK\r\n")
-                     .append("Content-Type: " + "application/json" + "\r\n")
-                     .append("Content-Length: " + 1 + "\r\n\r\n")
-                    .append("x");
 
-        return stringBuilder.toString();
+        public int code;
+
+        Status(int code){
+            this.code = code;
+        }
+
+        static String getName(Status status){
+            return WordUtils.capitalize(status.name().toLowerCase().replace("_", " "));
+        }
+
     }
 }
