@@ -1,6 +1,7 @@
 package pl.edu.pw.ii.DBBrowser.RequestProcessor.View;
 
-import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpRequest;
+
+import org.apache.http.HttpRequest;
 
 /**
  * Created by Bartosz Andrzejczak on 5/31/14.

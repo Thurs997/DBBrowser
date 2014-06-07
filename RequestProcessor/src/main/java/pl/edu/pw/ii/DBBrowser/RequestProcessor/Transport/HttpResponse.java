@@ -1,5 +1,7 @@
 package pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport;
 
+import pl.edu.pw.ii.DBBrowser.RequestProcessor.Utils.MimeTypeResolver;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,23 +9,18 @@ import java.util.Map;
  * Created by Bartosz Andrzejczak on 5/31/14.
  */
 public class HttpResponse {
-    boolean complete;
     Map<String, String> headerMap = new HashMap<String, String>();
+
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    String mimeType;
     byte[] content;
-
-    public boolean isComplete() {
-        return complete;
-    }
-
-    public void setComplete(boolean complete) {
-        this.complete = complete;
-    }
-
-    public static HttpResponse incomplete() {
-        HttpResponse incomplete = new HttpResponse();
-        incomplete.setComplete(false);
-        return incomplete;
-    }
 
     public Map<String, String> getHeaderMap() {
         return headerMap;
@@ -47,5 +44,14 @@ public class HttpResponse {
 
     public void setContent(byte[] content) {
         this.content = content;
+    }
+
+    public byte[] toBytes() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("HTTP/1.1 200 OK\n")
+                     .append("Content-Type: " + MimeTypeResolver.getFileMimeType("x.txt") + "; charset=utf-8\n")
+                     .append("Content-Length: " + content.length + '\n');
+
+        return stringBuilder.toString().getBytes();
     }
 }

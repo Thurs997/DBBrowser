@@ -29,7 +29,7 @@ allprojects{
         testCompile group: 'junit', name: 'junit', version: '4.11'
         driver group: 'mysql', name: 'mysql-connector-java', version: '5.1.16'
         driver group: 'ojdbc', name: 'ojdbc', version: '14'
-
+        compile 'org.apache.httpcomponents:httpcore:4.3.2'
     }
 }
 

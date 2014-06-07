@@ -1,10 +1,5 @@
 package pl.edu.pw.ii.DBBrowser;
 
-
-import pl.edu.pw.ii.DBBrowser.RequestProcessor.File.FileSystem;
-import pl.edu.pw.ii.DBBrowser.RequestProcessor.RequestProcessor;
-import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpRequest;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -16,7 +11,6 @@ import java.util.List;
  */
 public class ThreadManager {
     private static ThreadManager instance = null;
-    private int port;
     private ServerSocket serverSocket;
     private List<Client> clientList;
 
@@ -80,7 +74,7 @@ public class ThreadManager {
     }
 
     public static void main(String[] args) {
-        final int DEFAULT_PORT = 80;
+        final int DEFAULT_PORT = 8080;
         Runtime.getRuntime().addShutdownHook(new Thread()
         {
             @Override
@@ -103,6 +97,7 @@ public class ThreadManager {
             ThreadManager.getInstance().init(port);
         } catch(IOException e) {
             System.out.println("An error occurred while binding to port " + port + ", error message: " + e.getMessage());
+            System.exit(1);
         }
 
         ThreadManager.getInstance().acceptClients();

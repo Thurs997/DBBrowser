@@ -1,12 +1,20 @@
 package pl.edu.pw.ii.DBBrowser;
 
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.impl.io.DefaultHttpRequestParser;
+import org.apache.http.impl.io.HttpTransportMetricsImpl;
+import org.apache.http.impl.io.SessionInputBufferImpl;
+import org.apache.http.io.HttpMessageParser;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.RequestProcessor;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpResponse;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 
 
 public class Client extends Thread {
@@ -42,28 +50,27 @@ public class Client extends Thread {
         }
     }
 
-    private void processRequest() throws IOException {
+    private void processRequest() throws IOException, HttpException {
 
         PrintWriter outputStream = new PrintWriter(socket.getOutputStream(), true);
-        BufferedReader inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
+        SessionInputBufferImpl sessionInputBuffer = new SessionInputBufferImpl(new HttpTransportMetricsImpl(), 8 * 1024);
+        sessionInputBuffer.bind(socket.getInputStream());
         //set timeout for IO operations
         socket.setSoTimeout(10000);
 
-        String inputLine, outputLine;
         HttpResponse response;
         RequestProcessor rProcessor = new RequestProcessor();
+        HttpMessageParser<HttpRequest> httpMessageParser = new DefaultHttpRequestParser(sessionInputBuffer);
 
+        HttpRequest request = httpMessageParser.parse();
+        while(request != null) {
+            System.out.println(request.getRequestLine().getUri());
 
-        while((inputLine = inputStream.readLine())!= null && !finished) {
-            System.out.println(inputLine);
+            response = rProcessor.processRequest(request);
 
-            rProcessor.processRequest(inputLine);
-            response = rProcessor.getResponse();
-            if (!response.isComplete())
-                continue;
-
-            outputStream.print(response.toString());
+            outputStream.print(response.toBytes());
+            outputStream.flush();
+            request = httpMessageParser.parse();
         }
 
         //no need to close input and output streams as they will be automatically closed by socket.close()
