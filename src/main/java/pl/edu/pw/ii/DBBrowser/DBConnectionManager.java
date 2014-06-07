@@ -24,9 +24,10 @@ final public class DBConnectionManager {
         return instance;
     }
 
-    public void connect(String dbType, String dbUrl, String dbUserName, String dbUserPwd) {
+    public void connect(String dbUserName, String dbUserPwd) {
         String databaseDriver = null;
-
+        String dbType = Configuration.getInstance().getProperty("dbType");
+        String dbUrl = Configuration.getInstance().getProperty("dbUrl");
         try {
             if (conn!=null && conn.isValid(10))
             {

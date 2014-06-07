@@ -53,6 +53,7 @@ public class Client extends Thread {
         sessionInputBuffer.bind(socket.getInputStream());
         //set timeout for IO operations
         socket.setSoTimeout(10000);
+        socket.setKeepAlive(true);
 
         HttpResponse response;
         RequestProcessor rProcessor = new RequestProcessor();
@@ -63,7 +64,7 @@ public class Client extends Thread {
             System.out.println(request.getRequestLine().getUri());
 
             response = rProcessor.processRequest(request);
-            String r = response.toBytes();
+            String r = "x";//response.toBytes();
             System.out.println(r);
             out.writeBytes(r);
             out.flush();
