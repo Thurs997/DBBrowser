@@ -3,6 +3,7 @@ package pl.edu.pw.ii.DBBrowser.RequestProcessor.File;
 import org.apache.commons.io.IOUtils;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.FileResponse;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpResponse;
+import pl.edu.pw.ii.DBBrowser.RequestProcessor.Utils.MimeTypeResolver;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +25,7 @@ public class FileSystem {
     }
 
     private FileResponse tryGetFile(String path) throws IOException {
-        InputStream is = this.getClass().getClassLoader().getResourceAsStream("fs/"+path);
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream("fs"+path);
         if(is == null)
             return null;
         byte[] fileContent = IOUtils.toByteArray(is);
@@ -36,15 +37,14 @@ public class FileSystem {
     }
 
     private String resolveMimeType(String path) {
-        String ext = extractFileExt(path);
-        return "text/plain";
+        String fileName = extractFileName(path);
+        return MimeTypeResolver.getFileMimeType(fileName);
     }
 
-    private String extractFileExt(String path) {
+    private String extractFileName(String path) {
         String[] pathExploded = path.split("/");
         String fileName = pathExploded[pathExploded.length-1];
-        String[] fileNameExploded = fileName.split(".");
-        return fileNameExploded[fileNameExploded.length-1];
+        return fileName;
     }
 
     public String getFileAsString(String path) throws IOException {

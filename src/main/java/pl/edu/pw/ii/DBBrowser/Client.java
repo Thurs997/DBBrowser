@@ -1,7 +1,6 @@
 package pl.edu.pw.ii.DBBrowser;
 
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
+import org.apache.http.*;
 import org.apache.http.impl.io.DefaultHttpRequestParser;
 import org.apache.http.impl.io.HttpTransportMetricsImpl;
 import org.apache.http.impl.io.SessionInputBufferImpl;
@@ -10,16 +9,17 @@ import pl.edu.pw.ii.DBBrowser.RequestProcessor.RequestProcessor;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpResponse;
 
 import java.io.*;
-import java.net.Socket;
-import java.net.SocketException;
+import java.net.*;
 
 
 public class Client extends Thread {
     Socket socket;
+    int id;
     volatile boolean finished = false; //guard for stopping thread
 
     public Client(Socket s) {
         this.socket = s;
+        this.id = (int) (Math.random()*1000);
     }
 
     @Override
@@ -52,22 +52,29 @@ public class Client extends Thread {
         SessionInputBufferImpl sessionInputBuffer = new SessionInputBufferImpl(new HttpTransportMetricsImpl(), 8 * 1024);
         sessionInputBuffer.bind(socket.getInputStream());
         //set timeout for IO operations
-        socket.setSoTimeout(10000);
+        socket.setSoTimeout(60000);
 
         HttpResponse response;
         RequestProcessor rProcessor = new RequestProcessor();
         HttpMessageParser<HttpRequest> httpMessageParser = new DefaultHttpRequestParser(sessionInputBuffer);
+        HttpRequest request = null;
+        try{
+            while(true) {
+                try{
+                    request = httpMessageParser.parse();
+                } catch(ConnectionClosedException e){
+                    continue;
+                }
+                System.out.println(id+": "+request.getRequestLine().getUri());
 
-        HttpRequest request = httpMessageParser.parse();
-        while(request != null) {
-            System.out.println(request.getRequestLine().getUri());
-
-            response = rProcessor.processRequest(request);
-            String r = response.toBytes();
-            System.out.println(r);
-            out.writeBytes(r);
-            out.flush();
-            request = httpMessageParser.parse();
+                response = rProcessor.processRequest(request);
+                out.write(response.toBytes());
+                out.flush();
+            }
+        } catch(SocketTimeoutException e){
+            System.out.println("soTimeout - closing");
+            socket.close();
+            //System.exit(0);
         }
 
         //no need to close input and output streams as they will be automatically closed by socket.close()
