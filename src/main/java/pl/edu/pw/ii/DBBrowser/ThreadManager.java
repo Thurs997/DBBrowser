@@ -1,5 +1,7 @@
 package pl.edu.pw.ii.DBBrowser;
 
+import pl.edu.pw.ii.DBBrowser.Utils.ConfigLoader;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -13,14 +15,8 @@ public class ThreadManager {
     private static ThreadManager instance = null;
     private ServerSocket serverSocket;
     private List<Client> clientList;
-
     public static ThreadManager getInstance() {
         return instance == null ? instance = new ThreadManager() : instance;
-    }
-
-    public void init(int port) throws IOException {
-        serverSocket = new ServerSocket(port);
-        clientList = new LinkedList<Client>();
     }
 
     public void shutdown() {
@@ -70,11 +66,29 @@ public class ThreadManager {
     }
 
     private ThreadManager() {
-
+        try {
+            Configuration.getInstance().load(Configuration.getInstance().getProperty("configFile"));
+        } catch (IOException e) {
+            System.out.println("An error occurred while loading config file: "
+                    + Configuration.getInstance().getProperty("configFile")
+                    + ", error message: "
+                    + e.getMessage());
+            //TODO uncomment below
+            //System.exit(1);
+        }
+        try {
+            serverSocket = new ServerSocket(Configuration.getInstance().getPropertyAsInt("port"));
+        } catch (IOException e) {
+            System.out.println("An error occurred while binding to port "
+                    + Configuration.getInstance().getPropertyAsInt("port")
+                    + ", error message: "
+                    + e.getMessage());
+            System.exit(1);
+        }
+        clientList = new LinkedList<Client>();
     }
 
     public static void main(String[] args) {
-        final int DEFAULT_PORT = 8080;
         Runtime.getRuntime().addShutdownHook(new Thread()
         {
             @Override
@@ -83,23 +97,6 @@ public class ThreadManager {
                 ThreadManager.getInstance().shutdown();
             }
         });
-
-        int port = DEFAULT_PORT;
-        if(args.length != 0 && args.length >= 2) {
-            if(args[0].equals("-p")) {
-                port = Integer.parseInt(args[1]);
-            } else {
-                System.out.print("Args");
-            }
-        }
-
-        try {
-            ThreadManager.getInstance().init(port);
-        } catch(IOException e) {
-            System.out.println("An error occurred while binding to port " + port + ", error message: " + e.getMessage());
-            System.exit(1);
-        }
-
         ThreadManager.getInstance().acceptClients();
     }
 
