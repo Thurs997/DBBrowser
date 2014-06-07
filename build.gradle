@@ -1,37 +1,30 @@
 version = '1.0'
 apply plugin: 'java'
 
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
 processResources{
     from('resources')
 }
-
-dependencies{
-    compile project(":RequestProcessor")
-    compile project(":View")
+repositories {
+    mavenCentral()
 }
 
-allprojects{
-    apply plugin: 'java'
+configurations {
+    driver
+}
 
-    sourceCompatibility = 1.7
-    targetCompatibility = 1.7
-
-
-    repositories {
-        mavenCentral()
-    }
-
-    configurations {
-        driver
-    }
-
-    dependencies {
-        testCompile group: 'junit', name: 'junit', version: '4.11'
-        driver group: 'mysql', name: 'mysql-connector-java', version: '5.1.16'
-        driver group: 'ojdbc', name: 'ojdbc', version: '14'
-        compile 'org.apache.httpcomponents:httpcore:4.3.2'
-        compile 'org.apache.httpcomponents:httpclient:4.3.3'
-    }
+dependencies{
+    compile 'org.reflections:reflections:0.9.8'
+    compile 'commons-io:commons-io:2.4'
+    compile 'org.apache.commons:commons-lang3:3.3.2'
+    compile 'commons-codec:commons-codec:1.9'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    driver group: 'mysql', name: 'mysql-connector-java', version: '5.1.16'
+    driver group: 'ojdbc', name: 'ojdbc', version: '14'
+    compile 'org.apache.httpcomponents:httpcore:4.3.2'
+    compile 'org.apache.httpcomponents:httpclient:4.3.3'
 }
 
 jar{

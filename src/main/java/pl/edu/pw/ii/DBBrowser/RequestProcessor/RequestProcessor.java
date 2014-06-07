@@ -15,10 +15,12 @@ import org.apache.commons.codec.binary.Base64;
 public class RequestProcessor {
     private ViewManager viewManager;
     private FileSystem fileSystem;
+    private DBConnectionManager dbConn;
 
     public RequestProcessor(){
         viewManager = ViewManager.getInstance();
         fileSystem = new FileSystem();
+        dbConn = new DBConnectionManager();
     }
 
     public HttpResponse processRequest(org.apache.http.HttpRequest source){

@@ -1,9 +1,10 @@
-package pl.edu.pw.ii.DBBrowser;
+package pl.edu.pw.ii.DBBrowser.RequestProcessor;
+
+import pl.edu.pw.ii.DBBrowser.Configuration;
 
 import java.sql.*;
 
 final public class DBConnectionManager {
-    private static DBConnectionManager instance = null;
 
     //database drivers - supported
     private static final String ORACLE_DRIVER = "oracle.jdbc.driver.OracleDriver";
@@ -13,15 +14,8 @@ final public class DBConnectionManager {
     private Connection conn = null;
 
 
-    private DBConnectionManager() {
-    }
+    public DBConnectionManager() {
 
-    public static DBConnectionManager getInstance() {
-        if (instance == null)
-        {
-            instance = new DBConnectionManager();
-        }
-        return instance;
     }
 
     public void connect(String dbUserName, String dbUserPwd) {
