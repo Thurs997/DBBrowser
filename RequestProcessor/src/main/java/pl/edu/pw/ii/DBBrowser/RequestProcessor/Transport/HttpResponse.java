@@ -46,12 +46,13 @@ public class HttpResponse {
         this.content = content;
     }
 
-    public byte[] toBytes() {
+    public String toBytes() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("HTTP/1.1 200 OK\n")
-                     .append("Content-Type: " + MimeTypeResolver.getFileMimeType("x.txt") + "; charset=utf-8\n")
-                     .append("Content-Length: " + content.length + '\n');
+        stringBuilder.append("HTTP/1.1 200 OK\r\n")
+                     .append("Content-Type: " + "application/json" + "\r\n")
+                     .append("Content-Length: " + 1 + "\r\n\r\n")
+                    .append("x");
 
-        return stringBuilder.toString().getBytes();
+        return stringBuilder.toString();
     }
 }

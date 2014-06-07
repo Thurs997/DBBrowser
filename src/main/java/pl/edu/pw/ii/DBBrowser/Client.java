@@ -9,10 +9,7 @@ import org.apache.http.io.HttpMessageParser;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.RequestProcessor;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpResponse;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 
@@ -51,8 +48,7 @@ public class Client extends Thread {
     }
 
     private void processRequest() throws IOException, HttpException {
-
-        PrintWriter outputStream = new PrintWriter(socket.getOutputStream(), true);
+        DataOutputStream out = new DataOutputStream(socket.getOutputStream());
         SessionInputBufferImpl sessionInputBuffer = new SessionInputBufferImpl(new HttpTransportMetricsImpl(), 8 * 1024);
         sessionInputBuffer.bind(socket.getInputStream());
         //set timeout for IO operations
@@ -67,9 +63,10 @@ public class Client extends Thread {
             System.out.println(request.getRequestLine().getUri());
 
             response = rProcessor.processRequest(request);
-
-            outputStream.print(response.toBytes());
-            outputStream.flush();
+            String r = response.toBytes();
+            System.out.println(r);
+            out.writeBytes(r);
+            out.flush();
             request = httpMessageParser.parse();
         }
 
