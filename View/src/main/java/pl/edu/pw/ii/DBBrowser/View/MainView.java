@@ -1,6 +1,6 @@
 package pl.edu.pw.ii.DBBrowser.View;
 
-import org.apache.http.HttpRequest;
+import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpRequest;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.View.View;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.View.ViewHandler;
 

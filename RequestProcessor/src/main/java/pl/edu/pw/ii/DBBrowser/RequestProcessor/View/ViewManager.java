@@ -1,8 +1,8 @@
 package pl.edu.pw.ii.DBBrowser.RequestProcessor.View;
 
-import org.apache.http.HttpRequest;
 import org.reflections.Reflections;
 import org.reflections.scanners.TypeAnnotationsScanner;
+import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpRequest;
 
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
@@ -102,12 +102,12 @@ public class ViewManager {
     }
 
     public boolean isView(HttpRequest request) {
-        return (views.get(request.getRequestLine().getUri()) != null);
+        return (views.get(request.getPath()) != null);
     }
 
     public String getView(HttpRequest request) {
         try {
-            View view = views.get(request.getRequestLine().getUri()).newInstance();
+            View view = views.get(request.getPath()).newInstance();
             return view.getView(request);
         } catch (InstantiationException e) {
             e.printStackTrace();

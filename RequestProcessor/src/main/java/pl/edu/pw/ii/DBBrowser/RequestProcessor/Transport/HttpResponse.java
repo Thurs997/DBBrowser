@@ -57,28 +57,44 @@ public class HttpResponse {
     }
 
     public byte[] toBytes() {
-        addHeader("Content-Length", content == null ? "0" : String.valueOf(content.length));
-        if(mimeType == null)
-            mimeType = "text/plain";
-        addHeader("Content-Type", mimeType);
-        List<byte[]> responseLines = new ArrayList<byte[]>();
-        responseLines.add(statusLine.format(new Object[]{ status.code, Status.getName(status)}).getBytes());
-        for(Map.Entry<String, String> header : headerMap.entrySet())
-            responseLines.add(headerFormat.format(new Object[]{ header.getKey(), header.getValue()}).getBytes());
-        responseLines.add(LINE_DELIMETER.getBytes());
-        if(content != null)
-            responseLines.add(content);
+        addMandatoryHeaders();
+        List<byte[]> responseLines = getResponseLines();
+        ByteBuffer byteBuffer = getResponseByteBuffer(responseLines);
+        return byteBuffer.array();
+    }
+
+    private ByteBuffer getResponseByteBuffer(List<byte[]> responseLines) {
         int size = 0;
         for(byte[] line : responseLines)
             size += line.length;
         ByteBuffer byteBuffer = ByteBuffer.allocate(size);
         for(byte[] line : responseLines)
             byteBuffer.put(line);
-        return byteBuffer.array();
+        return byteBuffer;
     }
 
-    enum Status{
-        SERVICE_UNAVAILABLE(503),
+    private List<byte[]> getResponseLines() {
+        List<byte[]> responseLines = new ArrayList<byte[]>();
+        Object[] statusObject = {status.code, status.getName()};
+        responseLines.add(statusLine.format(statusObject).getBytes());
+        for(Map.Entry<String, String> header : headerMap.entrySet()){
+            Object[] headerObject = {header.getKey(), header.getValue()};
+            responseLines.add(headerFormat.format(headerObject).getBytes());
+        }
+        responseLines.add(LINE_DELIMETER.getBytes());
+        if(content != null)
+            responseLines.add(content);
+        return responseLines;
+    }
+
+    private void addMandatoryHeaders() {
+        addHeader(Header.CONTENT_LENGTH.key, content == null ? "0" : String.valueOf(content.length));
+        if(mimeType == null)
+            mimeType = "text/plain";
+        addHeader(Header.CONTENT_TYPE.key, mimeType);
+    }
+
+    public enum Status{
         URI_TOO_LONG(414),
         REQUEST_HEADER_FIELDS_TOO_LARGE(431),
         NOT_IMPLEMENTED(501),
@@ -87,16 +103,25 @@ public class HttpResponse {
         NOT_FOUND(404),
         OK(200);
 
-
         public int code;
 
         Status(int code){
             this.code = code;
         }
 
-        static String getName(Status status){
-            return WordUtils.capitalize(status.name().toLowerCase().replace("_", " "));
+        String getName(){
+            return WordUtils.capitalize(name().toLowerCase().replace("_", " "));
         }
 
+    }
+
+    public enum Header{
+        CONTENT_LENGTH("Content-Length"),
+        CONTENT_TYPE("Content-Type");
+
+        public String key;
+        Header(String key){
+            this.key = key;
+        }
     }
 }
