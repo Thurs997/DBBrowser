@@ -2,38 +2,50 @@ package pl.edu.pw.ii.DBBrowser;
 
 import java.sql.*;
 
-public class DBConnectionManager {
+final public class DBConnectionManager {
+    private static DBConnectionManager instance = null;
 
     //database drivers - supported
-    final static String ORACLE_DRIVER = "oracle.jdbc.driver.OracleDriver";
-    final static String MYSQL_DRIVER = "com.mysql.jdbc.Driver";
+    private static final String ORACLE_DRIVER = "oracle.jdbc.driver.OracleDriver";
+    private static final String MYSQL_DRIVER = "com.mysql.jdbc.Driver";
+
+    private PreparedStatement stmt;
+    private Connection conn = null;
 
 
-    //data needed to connect with database
-    static String databaseDriver;
-    static String databaseUrl; //full url - specific for database type
-    static String userName;
-    static String userPassword;
+    private DBConnectionManager() {
+    }
 
-    static Connection conn;
-    static PreparedStatement stmt;
+    public static DBConnectionManager getInstance() {
+        if (instance == null)
+        {
+            instance = new DBConnectionManager();
+        }
+        return instance;
+    }
 
-    public DBConnectionManager(String dbType, String dbUrl, String dbUserName, String dbUserPwd) {
-        conn = null;
+    public void connect(String dbType, String dbUrl, String dbUserName, String dbUserPwd) {
+        String databaseDriver = null;
+
+        try {
+            if (conn!=null && conn.isValid(10))
+            {
+                System.out.println("Already connected");
+                return;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         if (dbType.equals("mysql"))
             databaseDriver = MYSQL_DRIVER;
         else if (dbType.equals("oracle"))
             databaseDriver = ORACLE_DRIVER;
 
-        databaseUrl = dbUrl;
-        userName = dbUserName;
-        userPassword = dbUserPwd;
-
         try {
             Class.forName(databaseDriver).newInstance();
 
-            conn = DriverManager.getConnection(databaseUrl, userName, userPassword);
+            conn = DriverManager.getConnection(dbUrl, dbUserName, dbUserPwd);
             conn.setAutoCommit(false);
 
         } catch (ClassNotFoundException e) {
@@ -48,16 +60,19 @@ public class DBConnectionManager {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-
-
     }
 
-    public static ResultSet executeQuery(String sql) {
+    public ResultSet executeQuery(String sql) {
         ResultSet rs = null;
-
         stmt = null;
 
         try {
+            if (conn!=null || !conn.isValid(10))
+            {
+                System.out.println("Not connected");
+                return rs;
+            }
+
             stmt = conn.prepareStatement(sql);
             stmt.setQueryTimeout(10); //cancel query after 10 seconds
             rs = stmt.executeQuery();
