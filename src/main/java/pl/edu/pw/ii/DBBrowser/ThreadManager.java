@@ -1,5 +1,7 @@
 package pl.edu.pw.ii.DBBrowser;
 
+import org.apache.log4j.Logger;
+import pl.edu.pw.ii.DBBrowser.RequestProcessor.View.ViewManager;
 import pl.edu.pw.ii.DBBrowser.Utils.ConfigLoader;
 
 import java.io.IOException;
@@ -15,21 +17,22 @@ public class ThreadManager {
     private static ThreadManager instance = null;
     private ServerSocket serverSocket;
     private List<Client> clientList;
+    private Logger logger = Logger.getLogger(ThreadManager.class);
     public static ThreadManager getInstance() {
         return instance == null ? instance = new ThreadManager() : instance;
     }
 
     public void shutdown() {
-        System.out.println("Server shutting down...");
-        System.out.println("Closing socket.");
+        logger.info("Server shutting down...");
+        logger.info("Closing socket.");
         try {
             serverSocket.close();
         } catch(IOException e) {
-            System.out.println("An error occurred while closing socket, reason: " + e.getMessage());
+            logger.error("An error occurred while closing socket, reason: " + e.getMessage());
         }
-        System.out.println("Deregistering clients.");
+        logger.info("Deregistering clients.");
         deregisterClients();
-        System.out.println("Bye!");
+        logger.info("Bye!");
     }
 
     private void deregisterClients() {
@@ -51,13 +54,13 @@ public class ThreadManager {
                 acceptClient();
             }
         } catch (IOException e) {
-            System.out.println("Server socket closed, reason: " + e.getMessage());
+            logger.info("Server socket closed");
         }
     }
 
     private void acceptClient() throws IOException {
-            Socket socket = serverSocket.accept();
-            createAndRegisterNewClient(socket);
+        Socket socket = serverSocket.accept();
+        createAndRegisterNewClient(socket);
     }
 
     private void createAndRegisterNewClient(Socket socket) {
@@ -66,21 +69,38 @@ public class ThreadManager {
     }
 
     private ThreadManager() {
+        logger.info("");
+        logger.info("/******************************************************\\");
+        logger.info("|********************  DB BROWSER  ********************|");
+        logger.info("\\******************************************************/");
+        logger.info("Server is starting...");
+        logger.info("Loading configuration...");
         try {
             Configuration.getInstance().load(Configuration.getInstance().getProperty("configFile"));
         } catch (IOException e) {
-            System.out.println("An error occurred while loading config file: "
+            logger.error("An error occurred while loading config file: "
                     + Configuration.getInstance().getProperty("configFile")
                     + ", error message: "
                     + e.getMessage());
             //TODO uncomment below
             //System.exit(1);
         }
+        logger.info("Configuration loaded!");
+        logger.info("Binding to port "+Configuration.getInstance().getPropertyAsInt("port")+"...");
         try {
             serverSocket = new ServerSocket(Configuration.getInstance().getPropertyAsInt("port"));
         } catch (IOException e) {
-            System.out.println("An error occurred while binding to port "
+            logger.error("An error occurred while binding to port "
                     + Configuration.getInstance().getPropertyAsInt("port")
+                    + ", error message: "
+                    + e.getMessage());
+            System.exit(1);
+        }
+        logger.info("Binding complete!");
+        try {
+            ViewManager.getInstance();
+        } catch (Throwable e) {
+            logger.error("An error occurred while scanning for views"
                     + ", error message: "
                     + e.getMessage());
             System.exit(1);

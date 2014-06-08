@@ -15,12 +15,12 @@ import org.apache.commons.codec.binary.Base64;
 public class RequestProcessor {
     private ViewManager viewManager;
     private FileSystem fileSystem;
-    private DBConnectionManager dbConn;
+    private DBConnectionManager DBConnection;
 
     public RequestProcessor(){
         viewManager = ViewManager.getInstance();
         fileSystem = new FileSystem();
-        dbConn = new DBConnectionManager();
+        DBConnection = new DBConnectionManager();
     }
 
     public HttpResponse processRequest(org.apache.http.HttpRequest source){
@@ -32,7 +32,7 @@ public class RequestProcessor {
             if(!authorized(request))
                 return HttpResponseFactory.authorizationRequest();
             if(viewManager.isView(request))
-                return HttpResponseFactory.viewResponse(viewManager.getView(request));
+                return HttpResponseFactory.viewResponse(viewManager.getView(request, DBConnection));
             return HttpResponseFactory.fileResponse(fileSystem.getFile(request.getPath()));
         } catch (Throwable e){
             return HttpResponseFactory.internalServerError(e);
@@ -60,6 +60,12 @@ public class RequestProcessor {
         String password = credentials[1];
         //Temporary check:
         return userName.equals(password);
+        //Will be:
+        //return DBConnection.connect(userName, password);
+    }
+
+    public void closeDBConnection(){
+        DBConnection.close();
     }
 
 }

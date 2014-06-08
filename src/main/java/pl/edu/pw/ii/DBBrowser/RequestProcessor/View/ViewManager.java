@@ -1,14 +1,15 @@
 package pl.edu.pw.ii.DBBrowser.RequestProcessor.View;
 
+import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 import org.reflections.scanners.TypeAnnotationsScanner;
+import pl.edu.pw.ii.DBBrowser.RequestProcessor.DBConnectionManager;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpRequest;
 
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 
 /**
@@ -55,6 +56,7 @@ public class ViewManager {
         return reflections.getTypesAnnotatedWith(ViewHandler.class);
     }
 
+    @SuppressWarnings("unchecked")
     private void analyzeClass(Class<?> annotatedClass) {
         logger.info("Analyzing class "+annotatedClass.getCanonicalName());
         if(!implementsView(annotatedClass)) return;
@@ -84,7 +86,7 @@ public class ViewManager {
                     return viewHandler.path();
                 break;
             } catch (ClassCastException e) {
-                continue;
+
             }
         }
         logger.info("Class "+annotatedClass.getCanonicalName()+" cannot have empty path" +
@@ -105,10 +107,10 @@ public class ViewManager {
         return (views.get(request.getPath()) != null);
     }
 
-    public String getView(HttpRequest request) {
+    public String getView(HttpRequest request, DBConnectionManager DBConnection) {
         try {
             View view = views.get(request.getPath()).newInstance();
-            return view.getView(request);
+            return view.getView(request, DBConnection);
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {

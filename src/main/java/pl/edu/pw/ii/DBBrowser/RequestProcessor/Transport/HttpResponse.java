@@ -109,7 +109,7 @@ public class HttpResponse {
             this.code = code;
         }
 
-        String getName(){
+        public String getName(){
             return WordUtils.capitalize(name().toLowerCase().replace("_", " "));
         }
 
