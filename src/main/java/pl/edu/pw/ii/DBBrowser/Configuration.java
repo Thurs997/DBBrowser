@@ -17,7 +17,7 @@ public class Configuration {
         defaultProperties = new Properties();
         defaultProperties.setProperty("configFile", "config.ini");
         defaultProperties.setProperty("port", "8080");
-        defaultProperties.setProperty("maxConnectionsInMinute", "10");
+        defaultProperties.setProperty("maxConnectionsInMinute", "20");
     }
 
     public static Configuration getInstance() {
