@@ -60,7 +60,7 @@ final public class DBConnectionManager {
         return false;
     }
 
-    private List<String> executeListDatabases() throws SQLException {
+    public List<String> executeListDatabases() throws SQLException {
         List<String> databasesList = new ArrayList();
         DatabaseMetaData md = conn.getMetaData();
         ResultSet rs = null;
@@ -79,7 +79,7 @@ final public class DBConnectionManager {
         return databasesList;
     }
 
-    private List<String> executeListTables(String databaseName) throws SQLException {
+    public List<String> executeListTables(String databaseName) throws SQLException {
         List<String> tablesList = new ArrayList();
         DatabaseMetaData md = conn.getMetaData();
         ResultSet rs;
@@ -101,7 +101,7 @@ final public class DBConnectionManager {
         return tablesList;
     }
 
-    private String[][] executeListTableContent(String tableName) throws SQLException {
+    public String[][] executeListTableContent(String tableName) throws SQLException {
         DatabaseMetaData md = conn.getMetaData();
         ResultSet rs;
 
@@ -112,8 +112,7 @@ final public class DBConnectionManager {
         int rowsCount = 0;
         String sql = "select COUNT(*) from " + tableName;
 
-        stmt = conn.prepareStatement(sql);
-        rs = stmt.executeQuery();
+        rs = executeQuery(sql);
 
         while(rs.next())
         {
@@ -122,8 +121,8 @@ final public class DBConnectionManager {
 
         //execute actual query
         sql = "select * from" + tableName;
-        stmt = conn.prepareStatement(sql);
-        rs = stmt.executeQuery();
+
+        rs = executeQuery(sql);
 
         ResultSetMetaData rsMD = rs.getMetaData();
 
@@ -131,7 +130,7 @@ final public class DBConnectionManager {
         int columnsCount = rsMD.getColumnCount();
 
         //table with results: first row contains columns names, rest - query results
-        String[][] tableContent = new String[columnsCount][rowsCount+1];
+        String[][] tableContent = new String[rowsCount+1][columnsCount];
 
         for (int j=0;j<columnsCount;j++)
         {
@@ -153,7 +152,7 @@ final public class DBConnectionManager {
     }
 
 
-    public ResultSet executeQuery(int queryType, String databaseName, String tableName) {
+    ResultSet executeQuery(String sql) {
         ResultSet rs = null;
         stmt = null;
 
@@ -165,15 +164,8 @@ final public class DBConnectionManager {
             }
 
             stmt.setQueryTimeout(10); //cancel query after 10 seconds
-
-            switch (queryType) {
-                case 0: executeListDatabases();
-                    break;
-                case 1: executeListTables(databaseName);
-                    break;
-                case 2: executeListTableContent(tableName);
-                    break;
-            }
+            stmt = conn.prepareStatement(sql);
+            rs = stmt.executeQuery();
 
             conn.commit();
 
