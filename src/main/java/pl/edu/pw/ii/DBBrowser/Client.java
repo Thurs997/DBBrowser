@@ -18,7 +18,7 @@ public class Client extends Thread {
     private volatile boolean finished = false; //guard for stopping thread
     private RequestProcessor requestProcessor = null;
     private Logger logger = Logger.getLogger("RequestLogger");
-    private MessageFormat logEntry = new MessageFormat("{0} GET {1} - {2} {3} Response length {4}B");
+    private MessageFormat logEntry = new MessageFormat("{0} GET {1} - {2} {3} Response length={4}B");
     public Client(Socket s) {
         this.socket = s;
     }
