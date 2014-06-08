@@ -5,7 +5,7 @@ sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
 processResources{
-    from('resources')
+    from('src/main/resources')
 }
 repositories {
     mavenCentral()
@@ -25,6 +25,7 @@ dependencies{
     driver group: 'ojdbc', name: 'ojdbc', version: '14'
     compile 'org.apache.httpcomponents:httpcore:4.3.2'
     compile 'org.apache.httpcomponents:httpclient:4.3.3'
+    compile 'log4j:log4j:1.2.17'
 }
 
 jar{

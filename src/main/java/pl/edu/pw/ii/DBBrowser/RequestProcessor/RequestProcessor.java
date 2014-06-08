@@ -1,13 +1,10 @@
 package pl.edu.pw.ii.DBBrowser.RequestProcessor;
 
-import org.apache.http.*;
-import pl.edu.pw.ii.DBBrowser.RequestProcessor.File.FileSystem;
-import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpRequest;
-import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpRequestFactory;
-import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpResponse;
-import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpResponseFactory;
-import pl.edu.pw.ii.DBBrowser.RequestProcessor.View.ViewManager;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.http.Header;
+import pl.edu.pw.ii.DBBrowser.RequestProcessor.File.FileSystem;
+import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.*;
+import pl.edu.pw.ii.DBBrowser.RequestProcessor.View.ViewManager;
 
 /**
  * Created by Bartosz Andrzejczak on 5/31/14.
@@ -15,12 +12,12 @@ import org.apache.commons.codec.binary.Base64;
 public class RequestProcessor {
     private ViewManager viewManager;
     private FileSystem fileSystem;
-    private DBConnectionManager dbConn;
+    private DBConnectionManager DBConnection;
 
     public RequestProcessor(){
         viewManager = ViewManager.getInstance();
         fileSystem = new FileSystem();
-        dbConn = new DBConnectionManager();
+        DBConnection = new DBConnectionManager();
     }
 
     public HttpResponse processRequest(org.apache.http.HttpRequest source){
@@ -32,7 +29,7 @@ public class RequestProcessor {
             if(!authorized(request))
                 return HttpResponseFactory.authorizationRequest();
             if(viewManager.isView(request))
-                return HttpResponseFactory.viewResponse(viewManager.getView(request));
+                return HttpResponseFactory.viewResponse(viewManager.getView(request, DBConnection));
             return HttpResponseFactory.fileResponse(fileSystem.getFile(request.getPath()));
         } catch (Throwable e){
             return HttpResponseFactory.internalServerError(e);
@@ -60,6 +57,12 @@ public class RequestProcessor {
         String password = credentials[1];
         //Temporary check:
         return userName.equals(password);
+        //Will be:
+        //return DBConnection.connect(userName, password);
+    }
+
+    public void closeDBConnection(){
+        DBConnection.close();
     }
 
 }

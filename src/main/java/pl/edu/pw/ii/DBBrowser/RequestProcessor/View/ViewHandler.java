@@ -1,9 +1,6 @@
 package pl.edu.pw.ii.DBBrowser.RequestProcessor.View;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Created by Bartosz Andrzejczak on 5/31/14.

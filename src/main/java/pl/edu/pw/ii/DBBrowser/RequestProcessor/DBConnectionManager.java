@@ -20,7 +20,7 @@ final public class DBConnectionManager {
 
     }
 
-    public void connect(String dbUserName, String dbUserPwd) {
+    public boolean connect(String dbUserName, String dbUserPwd) {
         String databaseDriver = null;
         String dbType = Configuration.getInstance().getProperty("dbType");
         String dbUrl = Configuration.getInstance().getProperty("dbUrl");
@@ -28,7 +28,7 @@ final public class DBConnectionManager {
             if (conn!=null && conn.isValid(10))
             {
                 System.out.println("Already connected");
-                return;
+                return true;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -44,7 +44,7 @@ final public class DBConnectionManager {
 
             conn = DriverManager.getConnection(dbUrl, dbUserName, dbUserPwd);
             conn.setAutoCommit(false);
-
+            return true;
         } catch (ClassNotFoundException e) {
             System.out.println("Unable to load driver class");
             e.printStackTrace();
@@ -57,6 +57,7 @@ final public class DBConnectionManager {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return false;
     }
 
     private List<String> executeListDatabases() throws SQLException {

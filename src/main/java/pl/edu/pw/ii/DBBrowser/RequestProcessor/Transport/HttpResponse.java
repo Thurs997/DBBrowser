@@ -1,10 +1,10 @@
 package pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 import java.nio.ByteBuffer;
 import java.text.MessageFormat;
 import java.util.*;
-
-import org.apache.commons.lang3.text.WordUtils;
 
 /**
  * Created by Bartosz Andrzejczak on 5/31/14.
@@ -109,7 +109,7 @@ public class HttpResponse {
             this.code = code;
         }
 
-        String getName(){
+        public String getName(){
             return WordUtils.capitalize(name().toLowerCase().replace("_", " "));
         }
 
