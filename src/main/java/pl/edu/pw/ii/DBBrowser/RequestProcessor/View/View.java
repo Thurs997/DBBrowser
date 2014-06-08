@@ -10,5 +10,5 @@ import java.sql.SQLException;
  * Created by Bartosz Andrzejczak on 5/31/14.
  */
 public interface View {
-    public String getView(HttpRequest request, DBConnectionManager connection) throws SQLException;
+    public String getView(HttpRequest request, DBConnectionManager connection);
 }
