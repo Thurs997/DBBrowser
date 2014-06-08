@@ -13,12 +13,17 @@ public class Rows implements View {
     ViewUtils viewUtils = new ViewUtils();
 
     @Override
-    public String getView(HttpRequest request, DBConnectionManager connection) throws SQLException {
+    public String getView(HttpRequest request, DBConnectionManager connection) {
         String dbName = request.getParameter("dbName");
         String tableName = request.getParameter("tableName");
         String panelName = "Table " + connection;
         int panelWidth = 100;
-        String[][] tableContent = connection.executeListTableContent(tableName);
+        String[][] tableContent = new String[0][];
+        try {
+            tableContent = connection.executeListTableContent(tableName);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         String content = viewUtils.appendTable(tableContent);
         return viewUtils.generateHtml(panelName, panelWidth, content);
