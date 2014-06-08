@@ -48,7 +48,7 @@ public class ThreadManager {
                     + ", error message: "
                     + e.getMessage());
             //TODO uncomment below
-            //System.exit(1);
+            System.exit(1);
         }
         logger.info("Configuration loaded!");
         logger.info("Binding to port "+Configuration.getInstance().getPropertyAsInt("port")+"...");

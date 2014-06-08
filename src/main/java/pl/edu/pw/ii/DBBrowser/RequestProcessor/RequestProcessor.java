@@ -2,6 +2,7 @@ package pl.edu.pw.ii.DBBrowser.RequestProcessor;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.Header;
+import org.apache.log4j.Logger;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.File.FileSystem;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.*;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.View.ViewManager;
@@ -13,6 +14,7 @@ public class RequestProcessor {
     private ViewManager viewManager;
     private FileSystem fileSystem;
     private DBConnectionManager DBConnection;
+    private Logger logger = Logger.getLogger(RequestProcessor.class);
 
     public RequestProcessor(){
         viewManager = ViewManager.getInstance();
@@ -32,7 +34,8 @@ public class RequestProcessor {
                 return HttpResponseFactory.viewResponse(viewManager.getView(request, DBConnection));
             return HttpResponseFactory.fileResponse(fileSystem.getFile(request.getPath()));
         } catch (Throwable e){
-            return HttpResponseFactory.internalServerError(e);
+            logger.error("Application error", e);
+            return HttpResponseFactory.error(HttpResponse.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -56,9 +59,9 @@ public class RequestProcessor {
         String userName = credentials[0];
         String password = credentials[1];
         //Temporary check:
-        return userName.equals(password);
+        //return userName.equals(password);
         //Will be:
-        //return DBConnection.connect(userName, password);
+        return DBConnection.connect(userName, password);
     }
 
     public void closeDBConnection(){

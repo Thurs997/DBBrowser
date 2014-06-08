@@ -11,17 +11,14 @@ public class ConfigLoader {
 
     public static Properties loadFromFile(String fileName) throws IOException {
         //TODO uncomment before deploy
-//        InputStream input;
-//        try {
-//            input = new FileInputStream(fileName);
-//        } catch (FileNotFoundException e) {
-//            throw new IOException("File not found!");
-//        }
-//        Properties prop = loadFromStream(input);
-//        if(input != null)
-//            input.close();
-//        return prop;
-        return new Properties();
+        InputStream input;
+        input = ConfigLoader.class.getClassLoader().getResourceAsStream(fileName);
+        if(input == null)
+            return new Properties();
+        Properties prop = loadFromStream(input);
+        if(input != null)
+            input.close();
+        return prop;
     }
     public static Properties loadFromString(String configText) throws IOException {
         InputStream input = new ByteArrayInputStream(configText.getBytes(StandardCharsets.UTF_8));
