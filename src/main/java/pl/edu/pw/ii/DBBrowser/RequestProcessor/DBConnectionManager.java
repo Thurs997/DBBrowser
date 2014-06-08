@@ -3,6 +3,8 @@ package pl.edu.pw.ii.DBBrowser.RequestProcessor;
 import pl.edu.pw.ii.DBBrowser.Configuration;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 final public class DBConnectionManager {
 
@@ -58,7 +60,100 @@ final public class DBConnectionManager {
         return false;
     }
 
-    public ResultSet executeQuery(String sql) {
+    private List<String> executeListDatabases() throws SQLException {
+        List<String> databasesList = new ArrayList();
+        DatabaseMetaData md = conn.getMetaData();
+        ResultSet rs = null;
+
+        if(md.getDatabaseProductName().equals("Microsoft SQL Server")) //this query is different for mySQL
+            rs = md.getCatalogs();
+        else
+            rs = md.getSchemas();
+
+        while(rs.next())
+        {
+            String db = rs.getString(1);
+            databasesList.add(db);
+        }
+
+        return databasesList;
+    }
+
+    private List<String> executeListTables(String databaseName) throws SQLException {
+        List<String> tablesList = new ArrayList();
+        DatabaseMetaData md = conn.getMetaData();
+        ResultSet rs;
+
+        if (databaseName == null)
+            return tablesList;
+
+        if(md.getDatabaseProductName().equals("Microsoft SQL Server")) //this query is different for mySQL
+            rs = md.getTables(databaseName, null, "%", null);
+        else
+            rs = md.getTables(null, databaseName, "%", null);
+
+        while(rs.next())
+        {
+            String table = rs.getString(3);
+            tablesList.add(table);
+        }
+
+        return tablesList;
+    }
+
+    private String[][] executeListTableContent(String tableName) throws SQLException {
+        DatabaseMetaData md = conn.getMetaData();
+        ResultSet rs;
+
+        if (tableName==null)
+            return new String[0][0];
+
+        //get rows count
+        int rowsCount = 0;
+        String sql = "select COUNT(*) from " + tableName;
+
+        stmt = conn.prepareStatement(sql);
+        rs = stmt.executeQuery();
+
+        while(rs.next())
+        {
+            rowsCount = rs.getInt(1);
+        }
+
+        //execute actual query
+        sql = "select * from" + tableName;
+        stmt = conn.prepareStatement(sql);
+        rs = stmt.executeQuery();
+
+        ResultSetMetaData rsMD = rs.getMetaData();
+
+        //get columns and columns count
+        int columnsCount = rsMD.getColumnCount();
+
+        //table with results: first row contains columns names, rest - query results
+        String[][] tableContent = new String[columnsCount][rowsCount+1];
+
+        for (int j=0;j<columnsCount;j++)
+        {
+            String db = rsMD.getColumnName(j+1);
+            tableContent[0][j] = db;
+        }
+
+        for (int i=1;i<rowsCount+1;i++)
+        {
+            rs.next();
+            for (int j=0;j<columnsCount;j++)
+            {
+                String db = rs.getString(j+1); //getString() retrieves any basic SQL type - we'll stick with that for now
+                tableContent[i][j] = db;
+            }
+        }
+
+        return tableContent;
+    }
+
+
+    public ResultSet executeQuery(int queryType, String databaseName, String tableName) {
         ResultSet rs = null;
         stmt = null;
 
@@ -69,9 +164,16 @@ final public class DBConnectionManager {
                 return rs;
             }
 
-            stmt = conn.prepareStatement(sql);
             stmt.setQueryTimeout(10); //cancel query after 10 seconds
-            rs = stmt.executeQuery();
+
+            switch (queryType) {
+                case 0: executeListDatabases();
+                    break;
+                case 1: executeListTables(databaseName);
+                    break;
+                case 2: executeListTableContent(tableName);
+                    break;
+            }
 
             conn.commit();
 
