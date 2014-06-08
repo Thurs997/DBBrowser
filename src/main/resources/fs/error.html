@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>${code} ${text}</title>
+		<style>
+            body{
+                background-color: #fff;
+            }
+            .centered {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                margin-top: -226px;
+                margin-left: -400px;
+                width: 800px;
+                height: 452px;
+            }
+            .centered .title{
+                font-size: 40px;
+                font-weight: bold;
+                text-decoration: underline;
+                text-align: center;
+                clear: both;
+                color: #444;
+            }
+            .centered .image{
+                float: left;
+                width: 400px;
+                text-align: center;
+            }
+            .centered .image img{
+                width: 574px;
+                height: 300px;
+                margin-left: -84px;
+            }
+            .centered .text{
+                float:left;
+                width: 400px;
+                font-size: 40px;
+                padding-top: 80px;
+                font-weight: bold;
+                text-align: center;
+                color: red;
+            }
+		</style>	
+	</head>
+	<body>
+		<div class="centered">
+            <div class="title">${code} ${text}</div>
+            <div class="image">
+			 <img src="redbutton.png" />
+            </div>
+            <div class="text">
+            You pushed the red button, didn't you?
+            </div>
+		</div>
+	</body>
+</html>

@@ -1,5 +1,10 @@
 package pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+
 public abstract class HttpResponseFactory {
     public static final String CONTENT_TYPE_HTML = "text/html; charset=utf-8";
 
@@ -35,10 +40,35 @@ public abstract class HttpResponseFactory {
     }
 
     public static HttpResponse error(HttpResponse.Status status) {
+        if(status.equals(HttpResponse.Status.NOT_FOUND))
+            return error404();
         HttpResponse response = new HttpResponse();
         response.setStatus(status);
         response.setMimeType(CONTENT_TYPE_HTML);
-        response.setContent(("<b>Request invalid!</b><br />Error: " + status.getName()).getBytes());
+        InputStream is = HttpResponseFactory.class.getClassLoader().getResourceAsStream("fs/error.html");
+        try {
+            String fileContent = IOUtils.toString(is, "utf-8");
+            fileContent = fileContent
+                    .replace("${code}", String.valueOf(status.code))
+                    .replace("${text}", status.getName());
+            response.setContent(fileContent.getBytes());
+        } catch (IOException e) {
+
+        }
+        return response;
+    }
+
+    public static HttpResponse error404(){
+        HttpResponse response = new HttpResponse();
+        response.setStatus(HttpResponse.Status.NOT_FOUND);
+        response.setMimeType(CONTENT_TYPE_HTML);
+        InputStream is = HttpResponseFactory.class.getClassLoader().getResourceAsStream("fs/404.html");
+        try {
+            byte[] fileContent = IOUtils.toByteArray(is);
+            response.setContent(fileContent);
+        } catch (IOException e) {
+
+        }
         return response;
     }
 }
