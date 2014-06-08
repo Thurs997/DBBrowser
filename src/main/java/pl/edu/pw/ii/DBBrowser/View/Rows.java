@@ -27,7 +27,10 @@ public class Rows implements View {
             e.printStackTrace();
         }
 
-        String content = viewUtils.appendTable(tableContent);
-        return viewUtils.generateHtml(connection, panelName, panelWidth, content);
+        StringBuffer content = new StringBuffer();
+        content.append(viewUtils.appendTableNextPrev("/rows?dbName="+dbName+"&tableName="+tableName, start, count));
+        content.append(viewUtils.appendTable(tableContent));
+        content.append(viewUtils.appendTableNextPrev("/rows?dbName="+dbName+"&tableName="+tableName, start, count));
+        return viewUtils.generateHtml(connection, panelName, panelWidth, content.toString());
     }
 }

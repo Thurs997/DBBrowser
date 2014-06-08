@@ -16,6 +16,16 @@ public class ViewUtils {
         return htmlListString;
     }
 
+    protected String appendTableNextPrev(String link, int start, int count){
+        return "<table class=\"table\">\n" +
+                "<col width=\"50%\"><col width=\"50%\">"+
+                "            <tr>\n" +
+                "                <td style=\"text-align: left\">" + (start > 0 ? "<a href=\""+link+"&start="+(start-count)+"&count="+count+"\">Previous</a>\n" : "") + "</td>" +
+                "                <td style=\"text-align: right\"><a href=\""+link+"&start="+(start+count)+"&count="+count+"\">Next</a></td>\n" +
+                "            </tr>\n" +
+                "        </table>";
+    }
+
     protected String appendTable(String[][] tableContent) {
         String table = "      <table class=\"table table-hover\">\n";
 

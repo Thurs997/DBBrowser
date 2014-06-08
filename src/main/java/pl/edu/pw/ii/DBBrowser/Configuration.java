@@ -17,11 +17,16 @@ public class Configuration {
         defaultProperties = new Properties();
         defaultProperties.setProperty("configFile", "config.ini");
         defaultProperties.setProperty("port", "8080");
+        defaultProperties.setProperty("maxConnectionsInMinute", "10");
     }
 
     public static Configuration getInstance() {
-        if(instance == null)
-            instance = new Configuration();
+        if(instance == null){
+            synchronized (Configuration.class){
+                if(instance == null)
+                    instance = new Configuration();
+            }
+        }
         return instance;
     }
 
