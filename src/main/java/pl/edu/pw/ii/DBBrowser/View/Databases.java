@@ -18,12 +18,17 @@ public class Databases implements View {
     ViewUtils viewUtils = new ViewUtils();
 
     @Override
-    public String getView(HttpRequest request, DBConnectionManager DBConnection) throws SQLException {
+    public String getView(HttpRequest request, DBConnectionManager DBConnection) {
         int type = 0;
         String parameter = "dbName";
         String panelName = "Databases in " + parameter;
         int panelWidth = 60;
-        List<String> databasesList = DBConnection.executeListDatabases();
+        List<String> databasesList = null;
+        try {
+            databasesList = DBConnection.executeListDatabases();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         String content = viewUtils.appendList(databasesList);
         return viewUtils.generateHtml(panelName, panelWidth, content);
