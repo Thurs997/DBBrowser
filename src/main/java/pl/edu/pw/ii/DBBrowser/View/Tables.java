@@ -24,7 +24,7 @@ public class Tables implements View{
             e.printStackTrace();
         }
 
-        String content = viewUtils.appendList("/rows?dbName="+dbName+"&tableName=", tablesList);
+        String content = viewUtils.appendList("/rows?dbName="+dbName+"&start=0&count=50&tableName=", tablesList);
         return viewUtils.generateHtml(connection, panelName, panelWidth, content);
     }
 }

@@ -103,14 +103,16 @@ final public class DBConnectionManager {
         return tablesList;
     }
 
-    public String[][] executeListTableContent(String dbName, String tableName) throws SQLException {
+    public String[][] executeListTableContent(String dbName, String tableName, int from, int count) throws SQLException {
         if(dbType.equals("mysql"))
             connection.setCatalog(dbName);
         else
             connection.setSchema(dbName);
 
         //execute actual query
-        PreparedStatement sql = connection.prepareStatement("select * from " + tableName);
+        PreparedStatement sql = connection.prepareStatement("select * from " + tableName + " LIMIT ?, ?");
+        sql.setInt(1, from);
+        sql.setInt(2, count);
         ResultSet rs = sql.executeQuery();
 
         //get columns and columns count
