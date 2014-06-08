@@ -1,5 +1,7 @@
 package pl.edu.pw.ii.DBBrowser.View;
 
+import pl.edu.pw.ii.DBBrowser.RequestProcessor.DBConnectionManager;
+
 import java.util.List;
 
 public class ViewUtils {
@@ -7,12 +9,10 @@ public class ViewUtils {
         return "      <a href=\"" + ref + "\" class=\"list-group-item\">" + name + "</a>\n";
     }
 
-    protected String appendList(List<String> dataList) {
+    protected String appendList(String linkPrefix, List<String> dataList) {
         String htmlListString = "";
-        for (int i=0;i<5;i++)
-            htmlListString += newListLink(dataList.get(i), dataList.get(i));
-        //@TODO: powyzej zakladam na razie, ze nazwa bazy danych/tabeli na liscie == nazwa sciezki
-
+        for(String link : dataList)
+            htmlListString += newListLink(link, linkPrefix+link);
         return htmlListString;
     }
 
@@ -47,9 +47,7 @@ public class ViewUtils {
     }
 
 
-    protected String generateHtml(String panelName, int panelWidth, String content) {
-        String dbUrl = "DatabaseUrl"; //@TODO: change it
-        String dbUser = "User"; //@TODO: change it
+    protected String generateHtml(DBConnectionManager connection, String panelName, int panelWidth, String content) {
 
         String header= "<html lang=\"en\">\n" +
                 "  <head>\n" +
@@ -82,14 +80,15 @@ public class ViewUtils {
                 "\n" +
                 "    <div class=\"navbar navbar-inverse navbar-fixed-top\" role=\"navigation\">\n" +
                 "      <div class=\"container\">\n" +
-                "        <p class=\"navbar-text\">You are signed as " + dbUser + " to " + dbUrl + " database.</p>\n" +
+                "        <p class=\"navbar-text\">You are signed as " + connection.getUser() + " to " + connection.getUrl() + " database.</p>\n" +
                 "      </div>\n" +
                 "    </div>";
 
         String panelStart = "    <div class=\"container\">\n" +
                 "    <div class=\"panel panel-default\">\n" +
                 "     <div class=\"panel-heading\">\n" +
-                "      <h3 class=\"panel-title\">"+ panelName + "</h3>\n" +
+                "      <h3 class=\"panel-title\">"+ panelName + "</h3> "
+                +(panelName.equals("Databases") ? "" : "<a style\"cursor: pointer\" onclick=\"window.history.back()\">Back</a>\n") +
                 "     </div>\n" +
                 "    <div class=\"panel-body\">\n" +
                 "    <div class=\"list-group\">\n";

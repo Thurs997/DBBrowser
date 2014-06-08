@@ -24,7 +24,7 @@ public class Tables implements View{
             e.printStackTrace();
         }
 
-        String content = viewUtils.appendList(tablesList);
-        return viewUtils.generateHtml(panelName, panelWidth, content);
+        String content = viewUtils.appendList("/rows?dbName="+dbName+"&tableName=", tablesList);
+        return viewUtils.generateHtml(connection, panelName, panelWidth, content);
     }
 }

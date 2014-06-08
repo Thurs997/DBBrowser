@@ -19,9 +19,7 @@ public class Databases implements View {
 
     @Override
     public String getView(HttpRequest request, DBConnectionManager DBConnection) {
-        int type = 0;
-        String parameter = "dbName";
-        String panelName = "Databases in " + parameter;
+        String panelName = "Databases";
         int panelWidth = 60;
         List<String> databasesList = null;
         try {
@@ -30,8 +28,8 @@ public class Databases implements View {
             e.printStackTrace();
         }
 
-        String content = viewUtils.appendList(databasesList);
-        return viewUtils.generateHtml(panelName, panelWidth, content);
+        String content = viewUtils.appendList("/tables?dbName=", databasesList);
+        return viewUtils.generateHtml(DBConnection, panelName, panelWidth, content);
     }
 
 }

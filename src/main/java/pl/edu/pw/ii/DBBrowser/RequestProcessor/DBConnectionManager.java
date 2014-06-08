@@ -3,8 +3,7 @@ package pl.edu.pw.ii.DBBrowser.RequestProcessor;
 import pl.edu.pw.ii.DBBrowser.Configuration;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 final public class DBConnectionManager {
 
@@ -12,38 +11,47 @@ final public class DBConnectionManager {
     private static final String ORACLE_DRIVER = "oracle.jdbc.driver.OracleDriver";
     private static final String MYSQL_DRIVER = "com.mysql.jdbc.Driver";
 
-    private PreparedStatement stmt;
-    private Connection conn = null;
+    private Driver driver = null;
+    private Connection connection = null;
+    private String dbType;
+    private String dbUrl;
+    private String dbUser;
 
-
-    public DBConnectionManager() {
-
+    public String getUrl() {
+        return dbUrl;
     }
 
-    public boolean connect(String dbUserName, String dbUserPwd) {
-        String databaseDriver = null;
-        String dbType = Configuration.getInstance().getProperty("dbType");
-        String dbUrl = Configuration.getInstance().getProperty("dbUrl");
+    public String getUser(){
+        return dbUser;
+    }
+
+    public boolean connect(String userName, String password) {
         try {
-            if (conn!=null && conn.isValid(10))
-            {
-                System.out.println("Already connected");
+            if(connection != null && !connection.isClosed())
                 return true;
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
+        dbType = Configuration.getInstance().getProperty("dbType");
+        dbUrl = Configuration.getInstance().getProperty("dbUrl");
+
+        String databaseDriverClass;
         if (dbType.equals("mysql"))
-            databaseDriver = MYSQL_DRIVER;
+            databaseDriverClass = MYSQL_DRIVER;
         else if (dbType.equals("oracle"))
-            databaseDriver = ORACLE_DRIVER;
+            databaseDriverClass = ORACLE_DRIVER;
+        else
+            return false;
 
         try {
-            Class.forName(databaseDriver).newInstance();
+            driver = (Driver) Class.forName(databaseDriverClass).newInstance();
 
-            conn = DriverManager.getConnection(dbUrl, dbUserName, dbUserPwd);
-            conn.setAutoCommit(false);
+            Properties dbProperties = new Properties();
+            dbProperties.put("user", userName);
+            dbProperties.put("password", password);
+            connection = driver.connect(dbUrl, dbProperties);
+            this.dbUser = userName;
             return true;
         } catch (ClassNotFoundException e) {
             System.out.println("Unable to load driver class");
@@ -62,16 +70,13 @@ final public class DBConnectionManager {
 
     public List<String> executeListDatabases() throws SQLException {
         List<String> databasesList = new ArrayList();
-        DatabaseMetaData md = conn.getMetaData();
         ResultSet rs = null;
-
-        if(md.getDatabaseProductName().equals("Microsoft SQL Server")) //this query is different for mySQL
-            rs = md.getCatalogs();
+        if(dbType.equals("mysql"))
+            rs = connection.getMetaData().getCatalogs();
         else
-            rs = md.getSchemas();
+            rs = connection.getMetaData().getSchemas();
 
-        while(rs.next())
-        {
+        while(rs.next()){
             String db = rs.getString(1);
             databasesList.add(db);
         }
@@ -81,16 +86,13 @@ final public class DBConnectionManager {
 
     public List<String> executeListTables(String databaseName) throws SQLException {
         List<String> tablesList = new ArrayList();
-        DatabaseMetaData md = conn.getMetaData();
-        ResultSet rs;
+        ResultSet rs = null;
 
-        if (databaseName == null)
-            return tablesList;
-
-        if(md.getDatabaseProductName().equals("Microsoft SQL Server")) //this query is different for mySQL
-            rs = md.getTables(databaseName, null, "%", null);
+        if(dbType.equals("mysql"))
+            rs = connection.getMetaData().getTables(databaseName, null, "%", null);
         else
-            rs = md.getTables(null, databaseName, "%", null);
+            rs = connection.getMetaData().getTables(null, databaseName, "%", null);
+
 
         while(rs.next())
         {
@@ -101,96 +103,55 @@ final public class DBConnectionManager {
         return tablesList;
     }
 
-    public String[][] executeListTableContent(String tableName) throws SQLException {
-        DatabaseMetaData md = conn.getMetaData();
-        ResultSet rs;
-
-        if (tableName==null)
-            return new String[0][0];
-
-        //get rows count
-        int rowsCount = 0;
-        String sql = "select COUNT(*) from " + tableName;
-
-        rs = executeQuery(sql);
-
-        while(rs.next())
-        {
-            rowsCount = rs.getInt(1);
-        }
+    public String[][] executeListTableContent(String dbName, String tableName) throws SQLException {
+        if(dbType.equals("mysql"))
+            connection.setCatalog(dbName);
+        else
+            connection.setSchema(dbName);
 
         //execute actual query
-        sql = "select * from" + tableName;
-
-        rs = executeQuery(sql);
-
-        ResultSetMetaData rsMD = rs.getMetaData();
+        PreparedStatement sql = connection.prepareStatement("select * from " + tableName);
+        ResultSet rs = sql.executeQuery();
 
         //get columns and columns count
-        int columnsCount = rsMD.getColumnCount();
+        int columnsCount = rs.getMetaData().getColumnCount();
 
         //table with results: first row contains columns names, rest - query results
-        String[][] tableContent = new String[rowsCount+1][columnsCount];
+        List<String[]> result = new ArrayList<String[]>();
 
-        for (int j=0;j<columnsCount;j++)
+        result.add(new String[columnsCount]);
+        for (int i=0;i<columnsCount;i++)
         {
-            String db = rsMD.getColumnName(j+1);
-            tableContent[0][j] = db;
+            String columnName = rs.getMetaData().getColumnName(i + 1);
+            result.get(0)[i] = columnName;
         }
 
-        for (int i=1;i<rowsCount+1;i++)
+        int row = 0;
+        while(rs.next())
         {
-            rs.next();
-            for (int j=0;j<columnsCount;j++)
+            row++;
+            result.add(new String[columnsCount]);
+            for (int i=0;i<columnsCount;i++)
             {
-                String db = rs.getString(j+1); //getString() retrieves any basic SQL type - we'll stick with that for now
-                tableContent[i][j] = db;
+                String value = rs.getString(i+1); //getString() retrieves any basic SQL type - we'll stick with that for now
+                result.get(row)[i] = value;
             }
         }
 
-        return tableContent;
-    }
-
-
-    ResultSet executeQuery(String sql) {
-        ResultSet rs = null;
-        stmt = null;
-
-        try {
-            if (conn!=null || !conn.isValid(10))
-            {
-                System.out.println("Not connected");
-                return rs;
-            }
-
-            stmt.setQueryTimeout(10); //cancel query after 10 seconds
-            stmt = conn.prepareStatement(sql);
-            rs = stmt.executeQuery();
-
-            conn.commit();
-
-        } catch (SQLException e) {
-            try {
-                if (conn!=null)
-                    conn.rollback();
-            } catch (SQLException se) { }
-        } finally {
-            try {
-                if (stmt!=null)
-                    stmt.close();
-            } catch (SQLException e) { }
+        String[][] out = new String[result.size()][columnsCount];
+        int i = 0;
+        for(String[] resultRow : result){
+            out[i] = resultRow;
+            ++i;
         }
-
-        return rs;
+        return out;
     }
 
     public void close() {
 
         try {
-            if (stmt!=null && !stmt.isClosed()) //if statement is not closed, close it - this will cancel its execution
-                stmt.close();
-            if (conn!=null)
-                conn.close();
+            if (connection!=null)
+                connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

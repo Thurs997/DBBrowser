@@ -69,7 +69,7 @@ public class Client extends Thread {
             try{
                 request = httpMessageParser.parse();
             } catch (ConnectionClosedException e){
-                continue;
+                break;
             } catch (HttpException e) {
                 e.printStackTrace();
             }

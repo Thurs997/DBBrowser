@@ -13,10 +13,14 @@ public abstract class HttpRequestFactory {
     public static HttpRequest createHttpRequest(org.apache.http.HttpRequest source){
         HttpRequest destination = new HttpRequest();
         try {
-            destination.setPath(URLDecoder.decode(source.getRequestLine().getUri(), "UTF-8"));
-            List<NameValuePair> params = URLEncodedUtils.parse(source.getRequestLine().getUri(), Charsets.UTF_8);
-            for(NameValuePair param : params)
-                destination.addParameter(param.getName(), param.getValue());
+            String uri = URLDecoder.decode(source.getRequestLine().getUri(), "UTF-8");
+
+            destination.setPath(!uri.contains("?") ? uri : uri.substring(0, uri.indexOf("?")));
+            if(uri.contains("?")){
+                List<NameValuePair> params = URLEncodedUtils.parse(uri.substring(uri.indexOf("?") + 1, uri.length()), Charsets.UTF_8);
+                for(NameValuePair param : params)
+                    destination.addParameter(param.getName(), param.getValue());
+            }
             Header[] headers = source.getAllHeaders();
             for(Header header : headers)
                 destination.addHeader(header.getName(), header.getValue());
