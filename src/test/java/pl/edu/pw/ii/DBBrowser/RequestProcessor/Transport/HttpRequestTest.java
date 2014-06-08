@@ -1,11 +1,5 @@
 package pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport;
 
-import org.junit.Test;
-
-import java.util.Collections;
-
-import static org.junit.Assert.assertEquals;
-
 /**
  * Created by Bartosz Andrzejczak on 5/31/14.
  */

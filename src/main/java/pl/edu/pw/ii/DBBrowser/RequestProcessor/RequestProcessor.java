@@ -1,13 +1,10 @@
 package pl.edu.pw.ii.DBBrowser.RequestProcessor;
 
-import org.apache.http.*;
-import pl.edu.pw.ii.DBBrowser.RequestProcessor.File.FileSystem;
-import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpRequest;
-import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpRequestFactory;
-import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpResponse;
-import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpResponseFactory;
-import pl.edu.pw.ii.DBBrowser.RequestProcessor.View.ViewManager;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.http.Header;
+import pl.edu.pw.ii.DBBrowser.RequestProcessor.File.FileSystem;
+import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.*;
+import pl.edu.pw.ii.DBBrowser.RequestProcessor.View.ViewManager;
 
 /**
  * Created by Bartosz Andrzejczak on 5/31/14.

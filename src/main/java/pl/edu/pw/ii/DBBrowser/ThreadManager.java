@@ -2,7 +2,6 @@ package pl.edu.pw.ii.DBBrowser;
 
 import org.apache.log4j.Logger;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.View.ViewManager;
-import pl.edu.pw.ii.DBBrowser.Utils.ConfigLoader;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -18,56 +17,22 @@ public class ThreadManager {
     private ServerSocket serverSocket;
     private List<Client> clientList;
     private Logger logger = Logger.getLogger(ThreadManager.class);
+
+    public static void main(String[] args) {
+        Runtime.getRuntime().addShutdownHook(new Thread()
+        {
+            @Override
+            public void run()
+            {
+                ThreadManager.getInstance().shutdown();
+            }
+        });
+        ThreadManager.getInstance().acceptClients();
+    }
+
     public static ThreadManager getInstance() {
         return instance == null ? instance = new ThreadManager() : instance;
     }
-
-    public void shutdown() {
-        logger.info("Server shutting down...");
-        logger.info("Closing socket.");
-        try {
-            serverSocket.close();
-        } catch(IOException e) {
-            logger.error("An error occurred while closing socket, reason: " + e.getMessage());
-        }
-        logger.info("Deregistering clients.");
-        deregisterClients();
-        logger.info("Bye!");
-    }
-
-    private void deregisterClients() {
-        while(!clientList.isEmpty()) {
-            deregister(clientList.get(0));
-        }
-    }
-
-    public synchronized void deregister(Client client) {
-        client.close();
-        clientList.remove(client);
-    }
-
-
-
-    public void acceptClients() {
-        try {
-            while(true) {
-                acceptClient();
-            }
-        } catch (IOException e) {
-            logger.info("Server socket closed");
-        }
-    }
-
-    private void acceptClient() throws IOException {
-        Socket socket = serverSocket.accept();
-        createAndRegisterNewClient(socket);
-    }
-
-    private void createAndRegisterNewClient(Socket socket) {
-        clientList.add(new Client(socket));
-        clientList.get(clientList.size()-1).start();
-    }
-
     private ThreadManager() {
         logger.info("");
         logger.info("/******************************************************\\");
@@ -108,16 +73,48 @@ public class ThreadManager {
         clientList = new LinkedList<Client>();
     }
 
-    public static void main(String[] args) {
-        Runtime.getRuntime().addShutdownHook(new Thread()
-        {
-            @Override
-            public void run()
-            {
-                ThreadManager.getInstance().shutdown();
+    public void shutdown() {
+        logger.info("Server shutting down...");
+        logger.info("Closing socket.");
+        try {
+            serverSocket.close();
+        } catch(IOException e) {
+            logger.error("An error occurred while closing socket, reason: " + e.getMessage());
+        }
+        logger.info("Deregistering clients.");
+        deregisterClients();
+        logger.info("Bye!");
+    }
+
+    public void acceptClients() {
+        try {
+            while(true) {
+                acceptClient();
             }
-        });
-        ThreadManager.getInstance().acceptClients();
+        } catch (IOException e) {
+            logger.info("Server socket closed");
+        }
+    }
+
+    private void acceptClient() throws IOException {
+        Socket socket = serverSocket.accept();
+        createAndRegisterNewClient(socket);
+    }
+
+    private void createAndRegisterNewClient(Socket socket) {
+        clientList.add(new Client(socket));
+        clientList.get(clientList.size()-1).start();
+    }
+
+    private void deregisterClients() {
+        while(!clientList.isEmpty()) {
+            deregister(clientList.get(0));
+        }
+    }
+
+    public synchronized void deregister(Client client) {
+        client.close();
+        clientList.remove(client);
     }
 
 }

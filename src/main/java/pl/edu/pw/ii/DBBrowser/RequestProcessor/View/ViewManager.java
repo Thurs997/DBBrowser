@@ -7,9 +7,7 @@ import pl.edu.pw.ii.DBBrowser.RequestProcessor.DBConnectionManager;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpRequest;
 
 import java.lang.annotation.Annotation;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 /**

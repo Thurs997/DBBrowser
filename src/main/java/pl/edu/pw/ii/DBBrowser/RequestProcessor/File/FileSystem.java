@@ -1,12 +1,10 @@
 package pl.edu.pw.ii.DBBrowser.RequestProcessor.File;
 
-import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.FileResponse;
 import org.apache.commons.io.IOUtils;
+import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.FileResponse;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.Utils.MimeTypeResolver;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
+import java.io.*;
 
 /**
  * Created by Bartosz Andrzejczak on 5/31/14.

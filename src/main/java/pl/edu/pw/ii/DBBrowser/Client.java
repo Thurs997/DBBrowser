@@ -1,16 +1,15 @@
 package pl.edu.pw.ii.DBBrowser;
 
 import org.apache.http.*;
-import org.apache.http.impl.io.DefaultHttpRequestParser;
-import org.apache.http.impl.io.HttpTransportMetricsImpl;
-import org.apache.http.impl.io.SessionInputBufferImpl;
+import org.apache.http.impl.io.*;
 import org.apache.http.io.HttpMessageParser;
 import org.apache.log4j.Logger;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.RequestProcessor;
 import pl.edu.pw.ii.DBBrowser.RequestProcessor.Transport.HttpResponse;
 
-import java.io.*;
-import java.net.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
 import java.text.MessageFormat;
 
 
